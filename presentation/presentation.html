@@ -132,7 +132,7 @@ for url in start_urls:
 # EuroPython 2023 Session Titles
 
 ```
-(europython2023) ➜  code git:(main) ✗ python ep2023-requests.py
+$ python ep2023-requests.py
 The CPU in your browser: WebAssembly demystified
 Writing a Python interpreter from scratch, in half an hour.
 Rust for Python data engineers
@@ -192,17 +192,17 @@ https://scrapy.org/
 # Installing (Linux)
 
 ```
-renne@capivara:~$ git clone git@github.com:rennerocha/europython-2023-gathering-data-tutorial.git ep2023-tutorial
-renne@capivara:~$ cd ep2023-tutorial
-renne@capivara:~$ python3 -m venv .venv
-renne@capivara:~$ source .venv/bin/activate
-renne@capivara:~$ cd code
-renne@capivara:~$ pip install -r requirements
+$ git clone git@github.com:rennerocha/europython-2023-gathering-data-tutorial.git ep2023-tutorial
+$ cd ep2023-tutorial
+$ python3 -m venv .venv
+$ source .venv/bin/activate
+$ cd code
+$ pip install -r requirements
 
-(...) A lot of lines installing a lot of things
+(...) Many lines installing a lot of things
 
-renne@capivara:~$ scrapy version
-2.9.0
+$ scrapy version
+Scrapy 2.9.0
 ```
 
 https://bit.ly/ep2023-gathering-data
@@ -364,7 +364,7 @@ class: center, middle
 
 
 ```
-(europython2023) ➜  code git:(main) ✗ scrapy runspider ep2023-scrapy.py
+$ scrapy runspider ep2023-scrapy.py
 2023-06-28 20:26:47 [scrapy.utils.log] INFO: Scrapy 2.9.0 started (bot: scrapybot)
 2023-06-28 20:26:47 [scrapy.utils.log] INFO: Versions: lxml 4.9.2.0, libxml2 2.9.14, cssselect 1.2.0, parsel 1.8.1, w3lib 2.1.1, Twisted 22.10.0, Python 3.11.3 (main, May 30 2023, 17:18:52) [GCC 11.3.0], pyOpenSSL 23.2.0 (OpenSSL 3.1.1 30 May 2023), cryptography 41.0.1, Platform Linux-5.15.0-75-generic-x86_64-with-glibc2.35
 2023-06-28 20:26:47 [scrapy.crawler] INFO: Overridden settings:
@@ -399,7 +399,7 @@ class: center, middle
 ---
 
 ```
-(europython2023) ➜  code git:(main) ✗ scrapy runspider ep2023-scrapy.py -s HTTPCACHE_ENABLED=1
+$ scrapy runspider ep2023-scrapy.py -s HTTPCACHE_ENABLED=1
 2023-06-28 20:30:15 [scrapy.utils.log] INFO: Scrapy 2.9.0 started (bot: scrapybot)
 2023-06-28 20:30:15 [scrapy.utils.log] INFO: Versions: lxml 4.9.2.0, libxml2 2.9.14, cssselect 1.2.0, parsel 1.8.1, w3lib 2.1.1, Twisted 22.10.0, Python 3.11.3 (main, May 30 2023, 17:18:52) [GCC 11.3.0], pyOpenSSL 23.2.0 (OpenSSL 3.1.1 30 May 2023), cryptography 41.0.1, Platform Linux-5.15.0-75-generic-x86_64-with-glibc2.35
 2023-06-28 20:30:15 [scrapy.crawler] INFO: Overridden settings:
@@ -424,7 +424,7 @@ class: center, middle
 ```
 
 ```
-(europython2023) ➜  code git:(main) ✗ ls -la .scrapy
+$ ls -la .scrapy
 total 12
 drwxrwxr-x 3 renne renne 4096 jun 28 20:25 .
 drwxrwxr-x 4 renne renne 4096 jun 28 20:25 ..
@@ -658,6 +658,29 @@ https://docs.scrapy.org/en/latest/topics/feed-exports.html#topics-feed-exports
 class: center, middle
 ![cat](images/cat_keyboard.gif)
 
+---
+
+class: center, middle
+We will use http://toscrape.com/, a sandbox containing fictional websites
+with a simplified version of real world challenges we find during web scraping tasks.
+
+---
+
+# Exercise 1
+
+**Target:** https://quotes.toscrape.com/
+
+On this page, you will find a collection of quotes along with their respective authors.
+Each quote is accompanied by a link that directs you to a dedicated page providing
+additional details about the author, the quote itself, and a list of associated tags.
+
+Your task is to extract all of this information and export it into a JSON lines file.
+
+---
+<img class="fragment" src="images/exercise-1-page.png" width="100%">
+---
+
+<img class="fragment" src="images/exercise-1-sc.png" width="100%">
 ---
 
 # Exercise 1
@@ -915,6 +938,20 @@ when you navigate to the end of the page.
 
 ---
 
+
+<img class="fragment" src="images/exercise-2-scroll.gif" width="100%">
+
+
+---
+
+<img class="fragment" src="images/exercise-2-network.png" width="100%">
+
+---
+
+<img class="fragment" src="images/exercise-2-url.png" width="100%">
+
+---
+
 ```python
 # code/exercise-2.py
 import scrapy
@@ -930,7 +967,7 @@ class QuotesScrollSpider(scrapy.Spider):
 
     def parse(self, response):
         data = response.json()
-        actual_page = data.get("page")
+        current_page = data.get("page")
 
         for quote in data.get("quotes"):
             yield {
@@ -943,7 +980,7 @@ class QuotesScrollSpider(scrapy.Spider):
             }
 
         if data.get("has_next"):
-            next_page = actual_page + 1
+            next_page = current_page + 1
             yield scrapy.Request(
                 self.api_url.format(page=next_page),
             )
@@ -966,7 +1003,7 @@ class QuotesScrollSpider(scrapy.Spider):
 
     def parse(self, response):
         data = response.json()
-        actual_page = data.get("page")
+        current_page = data.get("page")
 
         for quote in data.get("quotes"):
             yield {
@@ -979,7 +1016,7 @@ class QuotesScrollSpider(scrapy.Spider):
             }
 
         if data.get("has_next"):
-            next_page = actual_page + 1
+            next_page = current_page + 1
             yield scrapy.Request(
                 self.api_url.format(page=next_page),
             )
@@ -1002,7 +1039,7 @@ class QuotesScrollSpider(scrapy.Spider):
 
     def parse(self, response):
 *       data = response.json()
-        actual_page = data.get("page")
+        current_page = data.get("page")
 
         for quote in data.get("quotes"):
             yield {
@@ -1015,7 +1052,7 @@ class QuotesScrollSpider(scrapy.Spider):
             }
 
         if data.get("has_next"):
-            next_page = actual_page + 1
+            next_page = current_page + 1
             yield scrapy.Request(
                 self.api_url.format(page=next_page),
             )
@@ -1038,7 +1075,7 @@ class QuotesScrollSpider(scrapy.Spider):
 
     def parse(self, response):
         data = response.json()
-*       actual_page = data.get("page")
+*       current_page = data.get("page")
 
         for quote in data.get("quotes"):
             yield {
@@ -1051,7 +1088,7 @@ class QuotesScrollSpider(scrapy.Spider):
             }
 
 *       if data.get("has_next"):
-*           next_page = actual_page + 1
+*           next_page = current_page + 1
 *           yield scrapy.Request(
 *               self.api_url.format(page=next_page),
 *           )
@@ -1074,7 +1111,7 @@ class QuotesScrollSpider(scrapy.Spider):
 
     def parse(self, response):
         data = response.json()
-        actual_page = data.get("page")
+        current_page = data.get("page")
 
 *       for quote in data.get("quotes"):
 *           yield {
@@ -1087,7 +1124,7 @@ class QuotesScrollSpider(scrapy.Spider):
 *           }
 
         if data.get("has_next"):
-            next_page = actual_page + 1
+            next_page = current_page + 1
             yield scrapy.Request(
                 self.api_url.format(page=next_page),
             )
@@ -1104,6 +1141,10 @@ are evident in the logs, the spider is not returning any data.
 
 **TIP**: To troubleshoot, open your browser and navigate to our target page.
 Press **Ctrl+U** (_View Page Source_) to inspect the HTML content of the page.
+
+---
+
+<img class="fragment" src="images/exercise-3-js.png" width="100%">
 
 ---
 
@@ -1276,6 +1317,22 @@ author, and then we can choose one tag that has a quote associate with them.
 ```
 scrapy.FormRequest("https://someurl.com", formdata={"form_data": "value"})
 ```
+---
+
+<img class="fragment" src="images/exercise-4-page.png" width="100%">
+
+---
+
+<img class="fragment" src="images/exercise-4-form-1.png" width="100%">
+
+---
+
+<img class="fragment" src="images/exercise-4-form-2.png" width="100%">
+
+---
+
+<img class="fragment" src="images/exercise-4-form-3.png" width="100%">
+
 ---
 
 ```python
