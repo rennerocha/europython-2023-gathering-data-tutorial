@@ -53,8 +53,6 @@ class: center middle
 
 ![Foto Renne](images/foto-perfil-quadrada.png)
 
-- Senior Python Developer and Web Scraping consultant
-
 - Maintainer of **Querido Diário** (https://queridodiario.ok.org.br/)
 
 - Maintainer of **Spidermon** (https://spidermon.readthedocs.io/)
@@ -1597,6 +1595,16 @@ class QuotesViewStateSpider(scrapy.Spider):
 *               "tag": quote.css(".tag::text").get(),
 *           }
 ```
+---
+
+# Monitoring
+
+- We need to ensure that we are extracting the data we need, so monitoring the execution of your spiders is crucial
+
+- Spidermon is a Scrapy extension that helps us to **monitor** our spiders and take **actions** based on the results of the execution of them
+
+- https://spidermon.readthedocs.io/
+
 ---
 
 class: center, middle
